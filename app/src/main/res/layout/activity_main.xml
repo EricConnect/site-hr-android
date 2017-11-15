@@ -21,15 +21,16 @@
 
     <RelativeLayout
         android:id="@+id/layout_person_info"
-        android:layout_width="350dp"
+        android:layout_width="fill_parent"
         android:layout_height="255dp"
         android:layout_marginBottom="1dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintBottom_toTopOf="@+id/navigation"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/imv_person"
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:layout_alignParentStart="true"
@@ -46,10 +47,9 @@
             android:layout_alignParentTop="true"
             android:layout_marginStart="52dp"
             android:layout_marginTop="15dp"
-            android:layout_toEndOf="@+id/imageView"
-            android:text="TextView"
-            android:textSize="30sp"
-            tools:text="姓名" />
+            android:layout_toEndOf="@+id/imv_person"
+            android:text="姓名"
+            android:textSize="26sp" />
 
         <TextView
             android:id="@+id/txt_dptmt"
@@ -58,9 +58,8 @@
             android:layout_alignStart="@+id/txt_name"
             android:layout_below="@+id/txt_name"
             android:layout_marginTop="26dp"
-            android:text="TextView"
-            android:textSize="24sp"
-            tools:text="部门" />
+            android:text="部门"
+            android:textSize="24sp" />
 
         <TextView
             android:id="@+id/txt_birth"
@@ -69,9 +68,8 @@
             android:layout_alignStart="@+id/txt_name"
             android:layout_below="@+id/txt_dptmt"
             android:layout_marginTop="26dp"
-            android:text="TextView"
-            android:textSize="24sp"
-            tools:text="生日" />
+            android:text="生日"
+            android:textSize="24sp" />
 
         <TextView
             android:id="@+id/txt_status"
@@ -80,19 +78,30 @@
             android:layout_alignStart="@+id/txt_name"
             android:layout_below="@+id/txt_birth"
             android:layout_marginTop="26dp"
-            android:text="TextView"
-            android:textSize="24sp"
-            tools:text="状态" />
+            android:text="状态"
+            android:textSize="24sp" />
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/layout_qrscanner"
-        android:layout_width="355dp"
-        android:layout_height="184dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="fill_parent"
+        android:layout_height="195dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <com.journeyapps.barcodescanner.DecoratedBarcodeView
+            android:id="@+id/zxing_barcode_holder"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            app:zxing_framing_rect_height="180dp"
+            app:zxing_framing_rect_width="220dp"
+            tools:layout_editor_absoluteX="194dp"
+            tools:layout_editor_absoluteY="4dp">
+
+        </com.journeyapps.barcodescanner.DecoratedBarcodeView>
     </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>
