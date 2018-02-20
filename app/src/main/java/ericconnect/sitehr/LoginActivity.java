@@ -3,7 +3,10 @@ package ericconnect.sitehr;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -56,8 +59,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      */
     private UserLoginTask mAuthTask = null;
 
+    private static String service_url;
+
     // UI references.
-    private AutoCompleteTextView mEmailView;
+    private AutoCompleteTextView mEmailView ;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
@@ -66,11 +71,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        SharedPreferences sharedPer = PreferenceManager.getDefaultSharedPreferences(this);
+
+        //setting service endpoint address, get value from shared preference.
+        service_url = sharedPer.getString(getString(R.string.pref_services_url), getString(R.string.pref_services_url_default));
+
+
         // Set up the login form.
-        AutoCompleteTextView mEmailView = findViewById(R.id.email);
+        mEmailView = findViewById(R.id.email);
         populateAutoComplete();
 
-        EditText mPasswordView = findViewById(R.id.password);
+        mPasswordView = findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -191,13 +203,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
+
+        return email.length() >2;
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() > 4;
+
+        return password.length() > 2;
     }
 
     /**
@@ -307,6 +319,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
+
+            if(this.mEmail.equals("demo") && this.mPassword.equals("demo")){
+                Intent intent = new Intent();
+                intent.setAction("com.ericconnect.sitehr.MainActivity");
+                intent.putExtra("com.ericconnect.sitehr.intent_operatorName","admin");
+                intent.putExtra("com.ericconnect.sitehr.intent_operatorId","public_guid");
+                startActivity(intent);
+                return true;
+            }
 
             try {
                 // Simulate network access.
