@@ -6,17 +6,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="ericconnect.sitehr.MainActivity">
-    <android.support.v7.widget.Toolbar
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:elevation="4dp"
-        />
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            />
         <RelativeLayout
             android:id="@+id/layout_qrscanner"
             android:layout_width="match_parent"
@@ -68,7 +71,7 @@
                 android:layout_marginTop="15dp"
                 android:layout_toEndOf="@+id/imv_person"
                 android:text="姓名"
-                android:textSize="26sp" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/txt_dptmt"
@@ -78,7 +81,7 @@
                 android:layout_below="@+id/txt_name"
                 android:layout_marginTop="26dp"
                 android:text="部门"
-                android:textSize="24sp" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/txt_birth"
@@ -88,7 +91,7 @@
                 android:layout_below="@+id/txt_dptmt"
                 android:layout_marginTop="26dp"
                 android:text="生日"
-                android:textSize="24sp" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/txt_status"
@@ -98,7 +101,16 @@
                 android:layout_below="@+id/txt_birth"
                 android:layout_marginTop="26dp"
                 android:text="状态"
-                android:textSize="24sp" />
+                android:textSize="18sp" />
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btn_test1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/imv_person"
+                android:layout_below="@+id/imv_person"
+                android:onClick="onTestBtnClick"
+                android:text="Button" />
         </RelativeLayout>
     </LinearLayout>
 

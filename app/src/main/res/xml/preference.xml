@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:defaultValue="http://192.168.1.6:5000/"
+        android:key="prefview_txt_service_url"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:summary="Service endpoint here."
+        android:title="Setting Service URL" />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="prefview_swt_demo"
+        android:summary="DEMO mode on, that did not need connect with server. Running on TEST demand."
+        android:title="DEMO mode" />
+</PreferenceScreen>
