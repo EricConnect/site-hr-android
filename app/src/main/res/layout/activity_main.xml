@@ -110,7 +110,7 @@
                 android:layout_alignStart="@+id/imv_person"
                 android:layout_below="@+id/imv_person"
                 android:onClick="onTestBtnClick"
-                android:text="Button" />
+                android:text="History" />
         </RelativeLayout>
     </LinearLayout>
 

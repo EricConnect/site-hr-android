@@ -1,9 +1,8 @@
 package ericconnect.sitehr;
 
-        import com.google.gson.annotations.Expose;
-        import com.google.gson.annotations.SerializedName;
-
-        import java.util.Date;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+import java.util.Date;
 
 
 /**
@@ -16,25 +15,28 @@ public class Person {
 
     @SerializedName("id")
     @Expose
-    private String id;
+    private String id = "unknown";
     @SerializedName("dpmt")
     @Expose
-    private String dpmt;
+    private String dpmt = "Unknown Department";
     @SerializedName("name")
     @Expose
-    private String name;
+    private String name = "unknown";
     @SerializedName("birth")
     @Expose
-    private Date birth;
+    private Date birth = new Date();
     @SerializedName("phone")
     @Expose
-    private String phone;
+    private String phone = "Unknown";
     @SerializedName("status")
     @Expose
-    private Integer status;
+    private Integer status = 0;
     @SerializedName("img_url")
     @Expose
-    private String imgUrl;
+    private String imgUrl = "http://127.0.0.1/";
+    @SerializedName("signature")
+    @Expose
+    private String signature = "unknown"; //md5(id, name, dpmt, md5salt);
 
     public String getId() {
         return id;
@@ -45,7 +47,7 @@ public class Person {
     }
 
     public String getDpmt() {
-        return dpmt;
+        return this.dpmt;
     }
 
     public void setDpmt(String dpmt) {
@@ -61,7 +63,7 @@ public class Person {
     }
 
     public Date getBirth() {
-        return birth;
+        return this.birth;
     }
 
     public void setBirth(Date birth) {
@@ -91,5 +93,9 @@ public class Person {
     public void setImgUrl(String imgUrl) {
         this.imgUrl = imgUrl;
     }
+
+    public String getSignature() { return signature;}
+
+    public void setSignature(String signature) { this.signature = signature;}
 
 }

@@ -1,13 +1,10 @@
 package ericconnect.sitehr;
-
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.icu.text.DateFormat;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -30,23 +27,28 @@ import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.nio.charset.Charset;
-import java.security.MessageDigest;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
 import com.google.common.hash.*;
+import com.yanzhenjie.permission.Action;
+import com.yanzhenjie.permission.AndPermission;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
+import com.yanzhenjie.permission.Permission;
+
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getName();
+    private static String TOKEN;
 
     public static String operator_id = "admin";
 
@@ -187,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
      */
     public void operateGetPersonInfo(String public_id){
 
-        ServiceHelper.getInstance(service_url).getPersonInfo(public_id).enqueue(new Callback<Person>() {
+        ServiceHelper.getInstance(service_url, TOKEN).getPersonInfo(public_id).enqueue(new Callback<Person>() {
             @Override
             public void onResponse(Call<Person> call, Response<Person> response) {
                 if(response.isSuccessful()){
@@ -211,21 +213,39 @@ public class MainActivity extends AppCompatActivity {
     * set workers Clock in as current datetime;
     *
     */
-    public void operateClockIn(String public_id, String operator_id){
-        ServiceHelper.getInstance(service_url).signIn(public_id, operator_id).enqueue(new Callback<String>() {
+    public void operateClockIn(String public_id, String operator_id) {
+        ServiceHelper.getInstance(service_url, TOKEN).signIn(public_id, operator_id).enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                if(response.isSuccessful()) {
-                    String str = response.body();
-                    if(str != null && !str.isEmpty()){
-                        Toast.makeText(getApplicationContext(), "登陆成功"+str, Toast.LENGTH_SHORT).show();
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response){
+                try {
+                    if (response.isSuccessful() && response.body() != null) {
+                        String str = response.body().string();
+                        if (str != null && !str.isEmpty()) {
+                            int responseCode = new JSONObject(str).getInt("code");
+
+                            if(responseCode == 200) {
+                                Toast.makeText(getApplicationContext(), "Success Clock in.", Toast.LENGTH_SHORT).show();
+                                operatingSuccess();
+                            }else
+                            {
+                                Toast.makeText(getApplicationContext(),"Error at Clock in. CODE:" + responseCode, Toast.LENGTH_SHORT).show();
+                            }
+                        }
                     }
+                }catch (Exception e){
+                    Log.d(TAG, e.toString());
+                    Toast.makeText(getApplicationContext(), "Error at" + e.getMessage(), Toast.LENGTH_SHORT).show();
+
                 }
 
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                Toast.makeText(MainActivity.this, "Clock in Error!"+t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.d(TAG, t.toString());
+
 
             }
         });
@@ -236,23 +256,51 @@ public class MainActivity extends AppCompatActivity {
     *
     */
     public void operateClockout(String public_id, String operator_id){
-        ServiceHelper.getInstance(service_url).signOut(public_id, operator_id).enqueue(new Callback<String>() {
+        ServiceHelper.getInstance(service_url, TOKEN).signOut(public_id, operator_id).enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                if(response.isSuccessful()) {
-                    String str = response.body();
-                    if(str != null && !str.isEmpty()){
-                        Toast.makeText(getApplicationContext(), "注销成功"+str, Toast.LENGTH_SHORT).show();
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response){
+                try {
+                    if (response.isSuccessful() && response.body() != null) {
+                        String str = response.body().string();
+                        if (str != null && !str.isEmpty()) {
+                            int responseCode = new JSONObject(str).getInt("code");
+
+                            if(responseCode == 200) {
+                                Toast.makeText(getApplicationContext(), "Success Clock out.", Toast.LENGTH_SHORT).show();
+                                operatingSuccess();
+                            }else
+                            {
+                                Toast.makeText(getApplicationContext(),"Error at Clock out. CODE:" + responseCode, Toast.LENGTH_SHORT).show();
+                            }
+                        }
                     }
+                }catch (Exception e){
+                    Log.d(TAG, e.toString());
+                    Toast.makeText(getApplicationContext(), "Error at" + e.getMessage(), Toast.LENGTH_SHORT).show();
+
                 }
 
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                Toast.makeText(MainActivity.this, "Clock out Error!"+t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.d(TAG, t.toString());
+
 
             }
         });
+    }
+
+    private void operatingSuccess() {
+        try {
+            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+            r.play();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void onTestBtnClick(View v){
@@ -263,7 +311,14 @@ public class MainActivity extends AppCompatActivity {
         pt.setPhone("123456789");
         pt.setStatus(2);
         pt.setImgUrl("http://192.168.1.189:8080/apps/Samples/thumb/sample03.jpg?1513112208");
+        pt.setId("fb351d8d-0c6b-4651-9b35-8aee9b59beff");
         changePersonView(pt);
+
+        Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
+        intent.putExtra("public_id", pt.getId().toString());
+
+        startActivity(intent);
+
 
     }
 
@@ -272,17 +327,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        validateLogin();
+
         SharedPreferences sharedPer = PreferenceManager.getDefaultSharedPreferences(this);
                 //getApplicationContext()
                 //.getSharedPreferences(getString(R.string.pref_default_name), Context.MODE_PRIVATE);
 
         //setting service endpoint address, get value from shared preference.
         service_url = sharedPer.getString(getString(R.string.pref_services_url), getString(R.string.pref_services_url_default));
-
+        TOKEN = sharedPer.getString("token","");
         this.operator_id = getIntent().getStringExtra("com.ericconnect.sitehr.intent_operatorId");
 
         mBarcodeView = findViewById(R.id.zxing_barcode_holder);
-        mBarcodeView.decodeContinuous(barcodeCallback);
+
+
+        startDecode(mBarcodeView, barcodeCallback);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.inflateMenu(R.menu.navigation);
@@ -299,11 +358,50 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayShowTitleEnabled(true);
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        //getSupportActionBar().setDisplayOptions(1);
 
 
     }
+
+    /**
+     * check login and token in shared preference, if not or null goto login activity.
+     */
+    private void validateLogin() {
+        SharedPreferences sharedPer = PreferenceManager.getDefaultSharedPreferences(this);
+        String Token = sharedPer.getString("token","");
+        Boolean isLogin = sharedPer.getBoolean("isLogin", false);
+
+
+        if(isNullOrEmpty(Token) || !isLogin){
+            Toast.makeText(this, "Login Please.", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+
+        }
+
+
+    }
+
+    private void startDecode(DecoratedBarcodeView view, BarcodeCallback callback) {
+
+        //get permissions.
+
+        AndPermission.with(this)
+                .permission(Permission.CAMERA)
+                .onDenied(new Action() {
+                    @Override
+                    public void onAction(List<String> permissions) {
+                        Toast.makeText(getApplicationContext(), R.string.warn_need_permissions, Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .start();
+
+        // start decode qr continuous.
+        view.decodeContinuous(callback);
+
+
+
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -353,6 +451,22 @@ public class MainActivity extends AppCompatActivity {
 
                 toolbar.setTitle(R.string.title_checkout);
                 operation_type = "ClockOut"; //change operation type to clock out;
+                break;
+
+            case R.id.navigation_about:
+                Intent intentAbout = new Intent(MainActivity.this, AboutActivity.class);
+                startActivity(intentAbout);
+                //show about
+                break;
+            case R.id.navigation_logout:
+
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putBoolean(getString(R.string.pref_isLogin), false);
+                editor.commit();
+                intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
                 break;
 
             // default. do nothing.

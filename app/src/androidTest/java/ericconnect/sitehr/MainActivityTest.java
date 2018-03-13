@@ -84,6 +84,10 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         jsonObject.put("department", person.getDpmt() );
         jsonObject.put("md5", md5);
 
+        /**
+         * { "public_id": "public_id Test","name": "Eric","department": "Test Department","md5": "ebea99ea2fcd4ad6148a9af7f9dac541"}
+         */
+
         String public_id = mainActivity.getPublicIdFromQRString(jsonObject.toString());
         assertEquals(public_id, personId);
     }

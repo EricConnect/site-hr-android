@@ -22,6 +22,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -31,9 +32,17 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -42,18 +51,12 @@ import static android.Manifest.permission.READ_CONTACTS;
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
+    private static final String TAG = LoginActivity.class.getName();
+
     /**
      * Id to identity READ_CONTACTS permission request.
      */
     private static final int REQUEST_READ_CONTACTS = 0;
-
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -318,34 +321,22 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
 
             if(this.mEmail.equals("demo") && this.mPassword.equals("demo")){
-                Intent intent = new Intent();
-                intent.setAction("com.ericconnect.sitehr.MainActivity");
+
+                setupSuccessLogin("fb351d8d-0c6b-4651-9b35-8aee9b59beff");
+
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 intent.putExtra("com.ericconnect.sitehr.intent_operatorName","admin");
-                intent.putExtra("com.ericconnect.sitehr.intent_operatorId","public_guid");
+                intent.putExtra("com.ericconnect.sitehr.intent_operatorId","fb351d8d-0c6b-4651-9b35-8aee9b59beff");
                 startActivity(intent);
                 return true;
             }
 
-            try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
+            remoteValidate(this.mEmail,this.mPassword);
 
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
 
-            // TODO: register the new account here.
-            return true;
+            return false;
         }
 
         @Override
@@ -366,6 +357,65 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = null;
             showProgress(false);
         }
+    }
+
+    private Boolean remoteValidate(String name, String pwd) {
+
+
+        ServiceHelper.getInstance(service_url,"").login(name, pwd).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response){
+                try {
+                    if (response.isSuccessful() && response.body() != null) {
+                        String str = response.body().string();
+                        if (str != null && !str.isEmpty()) {
+                            int responseCode = new JSONObject(str).getInt("code");
+
+                            if(responseCode == 200) {
+                                Toast.makeText(getApplicationContext(), " Login Success.", Toast.LENGTH_SHORT).show();
+
+                                setupSuccessLogin(new JSONObject(str).getString("token"));
+
+
+                            }else
+                            {
+                                Toast.makeText(getApplicationContext(),"Error at Login CODE:" + responseCode, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                }catch (Exception e){
+                    Log.d(TAG, e.toString());
+                    Toast.makeText(getApplicationContext(), "Error at" + e.getMessage(), Toast.LENGTH_SHORT).show();
+
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+                Toast.makeText(LoginActivity.this, "Login Error!"+t.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.d(TAG, t.toString());
+
+
+            }
+        });
+
+        return false;
+    }
+
+    private void setupSuccessLogin(String token) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(getString(R.string.pref_isLogin), true);
+        editor.putString("token", token);
+        editor.commit();
+
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        intent.putExtra("com.ericconnect.sitehr.intent_operatorName","admin");
+        intent.putExtra("com.ericconnect.sitehr.intent_operatorId",token);
+        startActivity(intent);
     }
 }
 

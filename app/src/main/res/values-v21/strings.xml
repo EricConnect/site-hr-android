@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="logout">Logout</string>
+    <string name="about">About</string>
+    <string name="pref_isLogin">isLogin</string>
+</resources>
