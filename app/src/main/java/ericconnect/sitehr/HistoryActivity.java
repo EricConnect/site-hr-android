@@ -69,10 +69,6 @@ public class HistoryActivity extends AppCompatActivity {
 
 
 
-
-
-
-
     }
 
     /**
@@ -100,7 +96,7 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
 
-    private void dataBind(GridView gridView, ArrayList<HashMap<String, String>> data){
+    protected void dataBind(GridView gridView, ArrayList<HashMap<String, String>> data){
 
         SimpleAdapter simpleAdapter = new SimpleAdapter(getApplicationContext()
                 , data
@@ -136,7 +132,7 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
 
-    private void getData(){
+    protected void getData(){
         final ArrayList<HashMap<String, String>> list = new ArrayList<>();
 
         ServiceHelper.getInstance(ENDPOINT, TOKEN)
@@ -177,7 +173,7 @@ public class HistoryActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(HistoryActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
-                historyProgress.setVisibility(View.INVISIBLE);
+                historyProgress.setVisibility(View.GONE);
 
 
             }
