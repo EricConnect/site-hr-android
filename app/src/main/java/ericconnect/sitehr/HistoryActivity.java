@@ -1,6 +1,8 @@
 package ericconnect.sitehr;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.session.MediaSession;
@@ -46,6 +48,8 @@ public class HistoryActivity extends AppCompatActivity {
     ProgressBar historyProgress;
     SimpleDateFormat simpleDateFormat;
     String publicID;
+    DatePickerDialog startDatePicker;
+    DatePickerDialog endDatePicker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,8 +152,8 @@ public class HistoryActivity extends AppCompatActivity {
 
                         for(int i=0; i<array.length(); i++){
                             HashMap<String,String> map = new HashMap<>();
-                            map.put("date",array.getJSONArray(i).getString(0).toString());
-                            map.put("status", array.getJSONArray(i).getString(1).toString());
+                            map.put("date",array.getJSONArray(i).getString(0));
+                            map.put("status", array.getJSONArray(i).getString(1));
 
                             list.add(map);
 
@@ -188,7 +192,7 @@ public class HistoryActivity extends AppCompatActivity {
         String startDate = startEditText.getText().toString();
         String endDate = endEditText.getText().toString();
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
         try{
             Date sDate = sdf.parse(startDate);
             Date eDate = sdf.parse(endDate);
@@ -218,7 +222,7 @@ public class HistoryActivity extends AppCompatActivity {
         Calendar mCalendar = Calendar.getInstance();
         final EditText startEdit = (EditText)view;
 
-        DatePickerDialog datePickerDialog = new DatePickerDialog(HistoryActivity.this, new DatePickerDialog.OnDateSetListener() {
+        startDatePicker = new DatePickerDialog(HistoryActivity.this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 Calendar mCalendar = Calendar.getInstance();
@@ -228,10 +232,13 @@ public class HistoryActivity extends AppCompatActivity {
 
                 startEdit.setText(simpleDateFormat.format(mCalendar.getTime()));
 
+                finish();
+
             }
         },mCalendar.get(Calendar.YEAR),mCalendar.get(Calendar.MONTH),mCalendar.get(Calendar.DAY_OF_MONTH));
 
-        datePickerDialog.show();
+        startDatePicker.show();
+
     }
 
     /**
@@ -242,7 +249,7 @@ public class HistoryActivity extends AppCompatActivity {
         Calendar mCalendar = Calendar.getInstance();
         final EditText endEdit = (EditText)view;
 
-        DatePickerDialog endDatePickerDialog = new DatePickerDialog(HistoryActivity.this, new DatePickerDialog.OnDateSetListener() {
+        endDatePicker = new DatePickerDialog(HistoryActivity.this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 Calendar mCalendar = Calendar.getInstance();
@@ -253,9 +260,39 @@ public class HistoryActivity extends AppCompatActivity {
 
                 endEdit.setText(simpleDateFormat.format(mCalendar.getTime()));
 
+
+
             }
         },mCalendar.get(Calendar.YEAR),mCalendar.get(Calendar.MONTH),mCalendar.get(Calendar.DAY_OF_MONTH));
 
-        endDatePickerDialog.show();
+        endDatePicker.show();
+
+    }
+    @Override
+    public void onStop(){
+        if(startDatePicker != null)
+            startDatePicker.dismiss();
+        if(endDatePicker != null)
+            endDatePicker.dismiss();
+        super.onStop();
+
+    }
+    @Override
+    public void onPause(){
+        if(startDatePicker != null)
+            startDatePicker.dismiss();
+        if(endDatePicker != null)
+            endDatePicker.dismiss();
+        super.onPause();
+
+    }
+    @Override
+    public void onDestroy(){
+        if(startDatePicker != null)
+            startDatePicker.dismiss();
+        if(endDatePicker != null)
+            endDatePicker.dismiss();
+        super.onDestroy();
+
     }
 }
