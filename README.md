@@ -9,4 +9,4 @@ https://play.google.com/store/apps/details?id=ericconnect.sitehr
 
 New version release soon, write by Kotlin language, Dagger, Room, etc..
 
-![login Activity](https://github.com/EricConnect/site-hr-android/blob/master/arts/Screenshot_1524062430.png?s=200)
+![login Activity](https://github.com/EricConnect/site-hr-android/blob/master/arts/Screenshot_1524062430.png?v=4&s=200)
