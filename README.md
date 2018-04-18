@@ -6,3 +6,7 @@ This application is apart of Enterpise information system as a client of workers
 
 #Google play store
 https://play.google.com/store/apps/details?id=ericconnect.sitehr
+
+New version release soon, write by Kotlin language, Dagger, Room, etc..
+
+![login Activity](https://github.com/EricConnect/site-hr-android/blob/master/arts/Screenshot_1524062430.png)
