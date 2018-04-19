@@ -11,3 +11,5 @@ New version release soon, write by Kotlin language, Anko, Dagger, Room, Firebase
 
 <img src="https://github.com/EricConnect/site-hr-android/blob/master/arts/Screenshot_1524062430.png" heigh="35%" width="35%"> <img src="https://github.com/EricConnect/site-hr-android/blob/master/arts/Screenshot_1524063102.png" heigh="35%" width="35%">
 <img src="https://github.com/EricConnect/site-hr-android/blob/master/arts/Screenshot_1524063107.png" heigh="35%" width="35%"> <img src="https://github.com/EricConnect/site-hr-android/blob/master/arts/Screenshot_1524063286.png" heigh="35%" width="35%">
+
+<img src="https://github.com/EricConnect/site-hr-android/blob/master/arts/ezgif-5-ea32ec5393.gif" > <img src="https://github.com/EricConnect/site-hr-android/blob/master/arts/ezgif-5-b32851380d.gif" >
