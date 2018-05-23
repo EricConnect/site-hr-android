@@ -4,8 +4,11 @@ This application is apart of Enterpise information system as a client of workers
 <br/>If someone want to look inside on running, please use <b>demo : demo</b> as username and password to login.
 <br/>Launch server side on a computer. In this application setting could change IP address.
 
-#Google play store
+#Google play store v1.0 ->
 https://play.google.com/store/apps/details?id=ericconnect.sitehr
+
+#Google play store v2.0 ->
+https://play.google.com/store/apps/details?id=com.sitehr.kotlin
 
 New version release soon, write by Kotlin language, Anko, Dagger, Room, Firebase, ZXing, etc..
 
